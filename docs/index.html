@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rssterm — docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crust:    #11111b;
+  --mantle:   #181825;
+  --base:     #1e1e2e;
+  --surface0: #313244;
+  --surface1: #45475a;
+  --surface2: #585b70;
+  --overlay0: #6c7086;
+  --overlay1: #7f849c;
+  --subtext0: #a6adc8;
+  --subtext1: #bac2de;
+  --text:     #cdd6f4;
+  --lavender: #b4befe;
+  --blue:     #89b4fa;
+  --sapphire: #74c7ec;
+  --green:    #a6e3a1;
+  --yellow:   #f9e2af;
+  --peach:    #fab387;
+  --red:      #f38ba8;
+  --mauve:    #cba6f7;
+  --pink:     #f5c2e7;
+
+  --font: 'JetBrains Mono', 'Fira Code', monospace;
+  --nav-w: 240px;
+  --content-max: 820px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 14px; }
+
+body {
+  font-family: var(--font);
+  background: var(--crust);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+/* ── scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface1); border-radius: 3px; }
+
+/* ═══════════ SIDEBAR ═══════════ */
+#sidebar {
+  width: var(--nav-w);
+  min-width: var(--nav-w);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background: var(--mantle);
+  border-right: 1px solid var(--surface0);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface1) transparent;
+}
+
+.sb-logo {
+  padding: 1.4rem 1.2rem 1rem;
+  border-bottom: 1px solid var(--surface0);
+  position: sticky;
+  top: 0;
+  background: var(--mantle);
+  z-index: 5;
+}
+
+.sb-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mauve);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.sb-title::before { content: '◆'; font-size: 9px; }
+
+.sb-sub {
+  font-size: 11px;
+  color: var(--overlay0);
+  margin-top: .25rem;
+  font-weight: 300;
+}
+
+.sb-group {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--overlay0);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 1.1rem 1.2rem .3rem;
+}
+
+#sidebar a {
+  display: block;
+  padding: .3rem 1.2rem .3rem 1.4rem;
+  color: var(--subtext0);
+  text-decoration: none;
+  font-size: 12.5px;
+  border-left: 2px solid transparent;
+  transition: color .12s, border-color .12s, background .12s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sidebar a:hover { color: var(--text); background: rgba(49,50,68,.5); }
+
+#sidebar a.active {
+  color: var(--mauve);
+  border-left-color: var(--mauve);
+  background: rgba(203,166,247,.07);
+  font-weight: 600;
+}
+
+#sidebar a.sub { padding-left: 2rem; font-size: 12px; color: var(--overlay1); }
+#sidebar a.sub.active { color: var(--lavender); border-left-color: var(--lavender); }
+
+/* ═══════════ MAIN ═══════════ */
+main {
+  flex: 1;
+  max-width: var(--content-max);
+  padding: 3rem 3.5rem 6rem;
+  overflow-x: hidden;
+  animation: fadein .35s ease both;
+}
+
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ═══════════ HERO ═══════════ */
+.hero {
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--surface0);
+  animation: fadein .4s ease .05s both;
+}
+
+.hero-name {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--mauve);
+  letter-spacing: .1em;
+  line-height: 1;
+  margin-bottom: .7rem;
+}
+
+.hero-name .dim { color: var(--surface2); font-weight: 300; }
+
+.hero-desc {
+  font-size: 13.5px;
+  color: var(--subtext0);
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+.hero-desc a { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(137,180,250,.25); transition: color .12s; }
+.hero-desc a:hover { color: var(--lavender); }
+
+.badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+
+.badge {
+  font-size: 11px;
+  padding: .2rem .55rem;
+  border-radius: 3px;
+  border: 1px solid var(--surface1);
+  background: var(--surface0);
+  color: var(--subtext0);
+  font-weight: 500;
+  letter-spacing: .03em;
+}
+.badge.m { border-color: rgba(203,166,247,.4); color: var(--mauve);  background: rgba(203,166,247,.08); }
+.badge.b { border-color: rgba(137,180,250,.4); color: var(--blue);   background: rgba(137,180,250,.08); }
+.badge.g { border-color: rgba(166,227,161,.4); color: var(--green);  background: rgba(166,227,161,.08); }
+.badge.p { border-color: rgba(250,179,135,.4); color: var(--peach);  background: rgba(250,179,135,.08); }
+
+/* ═══════════ TERMINAL MOCKUP ═══════════ */
+.term-win {
+  background: var(--base);
+  border: 1px solid var(--surface1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.8rem 0 2.5rem;
+  box-shadow: 0 24px 64px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.3), 0 0 48px rgba(203,166,247,.04);
+}
+
+.term-bar {
+  background: var(--mantle);
+  padding: .55rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  border-bottom: 1px solid var(--surface0);
+}
+
+.dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.dot.r { background: #ff5f57; }
+.dot.y { background: #febc2e; }
+.dot.g { background: #28c840; }
+
+.term-label {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: var(--overlay0);
+  letter-spacing: .05em;
+}
+
+.term-body {
+  padding: 1.1rem 1.4rem;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ═══════════ SECTIONS ═══════════ */
+section { margin-bottom: 3.2rem; scroll-margin-top: 1.5rem; }
+
+h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--lavender);
+  margin-bottom: 1.1rem;
+  padding-bottom: .55rem;
+  border-bottom: 1px solid var(--surface0);
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  letter-spacing: .03em;
+}
+
+h2::before { content: '##'; color: var(--surface2); font-size: 13px; font-weight: 400; }
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--blue);
+  margin: 1.8rem 0 .65rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+h3::before { content: '›'; color: var(--surface2); font-weight: 300; font-size: 16px; }
+
+h4 { font-size: 13.5px; font-weight: 600; color: var(--peach); margin: 1.3rem 0 .45rem; }
+
+p { color: var(--subtext1); margin-bottom: .9rem; line-height: 1.75; }
+p strong { color: var(--text); font-weight: 600; }
+p a, li a { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(137,180,250,.2); }
+p a:hover, li a:hover { color: var(--lavender); }
+
+ul, ol { padding-left: 1.4rem; margin-bottom: .9rem; color: var(--subtext1); }
+li { margin-bottom: .3rem; line-height: 1.7; }
+li strong { color: var(--text); }
+
+/* inline code */
+code {
+  font-family: var(--font);
+  font-size: 12.5px;
+  background: var(--surface0);
+  color: var(--peach);
+  padding: .1em .38em;
+  border-radius: 3px;
+  border: 1px solid var(--surface1);
+}
+
+/* ═══════════ CODE BLOCKS ═══════════ */
+pre {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: 6px;
+  margin: 1.1rem 0;
+  overflow-x: auto;
+}
+
+.pre-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .4rem 1rem;
+  background: var(--crust);
+  border-bottom: 1px solid var(--surface0);
+  border-radius: 6px 6px 0 0;
+}
+
+.pre-lang {
+  font-size: 10.5px;
+  color: var(--overlay0);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.pre-dots { display: flex; gap: 5px; }
+.pre-dot  { width: 7px; height: 7px; border-radius: 50%; background: var(--surface1); }
+
+pre code {
+  display: block;
+  padding: .9rem 1.2rem;
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 0;
+  white-space: pre;
+}
+
+/* bash tokens */
+.sh-c { color: var(--overlay0); font-style: italic; }
+.sh-k { color: var(--blue); }
+.sh-s { color: var(--green); }
+.sh-p { color: var(--peach); }
+.sh-f { color: var(--yellow); }
+
+/* yaml tokens */
+.y-k  { color: var(--blue); }
+.y-v  { color: var(--green); }
+.y-b  { color: var(--mauve); }
+.y-c  { color: var(--overlay0); font-style: italic; }
+.y-d  { color: var(--surface2); }
+
+/* ts tokens */
+.ts-kw { color: var(--mauve); }
+.ts-ty { color: var(--yellow); }
+.ts-s  { color: var(--green); }
+.ts-c  { color: var(--overlay0); font-style: italic; }
+.ts-n  { color: var(--peach); }
+
+/* ═══════════ TABLES ═══════════ */
+.tbl-wrap { overflow-x: auto; margin: 1.1rem 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+thead tr { background: var(--surface0); border-bottom: 2px solid var(--surface1); }
+thead th {
+  padding: .55rem .9rem;
+  text-align: left;
+  color: var(--subtext1);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+tbody tr { border-bottom: 1px solid var(--surface0); transition: background .1s; }
+tbody tr:hover { background: rgba(49,50,68,.45); }
+tbody td { padding: .5rem .9rem; color: var(--subtext0); vertical-align: top; }
+
+table.kb  tbody td:first-child { color: var(--text); }
+table.stk tbody td:first-child { color: var(--subtext0); }
+table.stk tbody td:nth-child(2){ color: var(--text); }
+table.yt  tbody td:first-child code { color: var(--blue); }
+table.yt  tbody td:nth-child(2) code { color: var(--green); }
+
+kbd {
+  font-family: var(--font);
+  font-size: 12px;
+  background: var(--surface0);
+  color: var(--yellow);
+  padding: .1em .42em;
+  border-radius: 3px;
+  border: 1px solid var(--surface1);
+  border-bottom-width: 2px;
+}
+
+/* ═══════════ FILE TREE ═══════════ */
+.filetree {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: 6px;
+  padding: .9rem 1.2rem;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 1.1rem 0;
+}
+
+.ft-dir  { color: var(--blue);    font-weight: 600; }
+.ft-file { color: var(--text); }
+.ft-note { color: var(--overlay0); font-size: 12px; }
+.ft-tree { color: var(--surface2); }
+
+/* ═══════════ BLOCKQUOTE ═══════════ */
+blockquote {
+  border-left: 3px solid var(--mauve);
+  background: rgba(203,166,247,.05);
+  padding: .7rem 1.1rem;
+  margin: 1.1rem 0;
+  border-radius: 0 4px 4px 0;
+}
+blockquote p { color: var(--subtext1); font-size: 13px; margin: 0; }
+blockquote strong { color: var(--mauve); }
+
+/* ═══════════ FEATURE GRID ═══════════ */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: .7rem;
+  margin: 1.1rem 0;
+}
+
+.feat-card {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: 6px;
+  padding: .85rem 1rem;
+  transition: border-color .15s, background .15s;
+}
+
+.feat-card:hover { border-color: var(--surface1); background: var(--surface0); }
+
+.feat-title {
+  color: var(--mauve);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: .3rem;
+}
+
+.feat-desc { color: var(--subtext0); font-size: 12.5px; line-height: 1.55; }
+
+/* ═══════════ TERMINAL COLOR HELPERS ═══════════ */
+.t-mauve  { color: var(--mauve); }
+.t-green  { color: var(--green); }
+.t-blue   { color: var(--blue); }
+.t-peach  { color: var(--peach); }
+.t-red    { color: var(--red); }
+.t-dim    { color: var(--overlay0); }
+.t-sub    { color: var(--subtext0); }
+.t-text   { color: var(--text); }
+.t-bold   { font-weight: 700; }
+
+hr { border: none; border-top: 1px solid var(--surface0); margin: 2rem 0; }
+
+@media (max-width: 860px) {
+  #sidebar { display: none; }
+  main { padding: 2rem 1.5rem 4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-title">rssterm</div>
+    <div class="sb-sub">terminal rss reader</div>
+  </div>
+
+  <div class="sb-group">Getting Started</div>
+  <a href="#features">Features</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#installation">Installation</a>
+
+  <div class="sb-group">Configuration</div>
+  <a href="#configuration">Config file</a>
+  <a href="#youtube" class="sub">YouTube channels</a>
+
+  <div class="sb-group">Reference</div>
+  <a href="#keybindings">Keybindings</a>
+  <a href="#normal-mode" class="sub">Normal mode</a>
+  <a href="#search-mode" class="sub">Search mode</a>
+  <a href="#config-panel" class="sub">Config panel</a>
+
+  <div class="sb-group">Internals</div>
+  <a href="#structure">Project structure</a>
+  <a href="#stack">Stack</a>
+  <a href="#development">Development</a>
+  <a href="#customization">Customization</a>
+</nav>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-name"><span class="dim">◆  </span>rssterm<span class="dim">  ◆</span></div>
+    <p class="hero-desc">
+      A keyboard-driven terminal RSS reader built with
+      <a href="https://github.com/vadimdemedes/ink">Ink</a> (React for the terminal),
+      <a href="https://www.termcn.dev">termcn</a> components, and the Catppuccin Mocha theme.
+    </p>
+    <div class="badges">
+      <span class="badge m">Ink 7 · React 19</span>
+      <span class="badge b">TypeScript</span>
+      <span class="badge g">termcn</span>
+      <span class="badge p">Catppuccin Mocha</span>
+      <span class="badge">pnpm</span>
+      <span class="badge">MIT</span>
+    </div>
+  </div>
+
+  <!-- TERMINAL MOCKUP -->
+  <div class="term-win">
+    <div class="term-bar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="term-label">rssterm — fish</div>
+    </div>
+    <div class="term-body"><span class="t-mauve t-bold">◆   ✦ RSSTERM ✦   ◆</span>
+<span class="t-dim">────────────────────────────────────────────────────</span>
+<span class="t-mauve t-bold">⌂  HOME</span><span class="t-dim"> │ </span><span class="t-sub"> TECH (3)</span><span class="t-dim"> │ </span><span class="t-sub"> GAMING</span><span class="t-dim"> │ </span><span class="t-sub"> PODCASTS</span>
+<span class="t-dim">┌───────────────────────────────────────────────────┐</span>
+<span class="t-dim">│ </span><span class="t-dim"> ┌─[CPU]─┐ </span><span class="t-mauve t-bold"> TECH                    </span><span class="t-sub"> 12 articles </span><span class="t-dim">│</span>
+<span class="t-dim">│ </span><span class="t-dim"> │ ■ □ ■ │                                       │</span>
+<span class="t-dim">│ </span><span class="t-dim"> └───────┘  ─────────────────────────────────── │</span>
+<span class="t-dim">│ </span><span class="t-mauve t-bold">▶ Against the Web            </span><span class="t-peach">[The Verge]</span>  <span class="t-green">2h ago</span>  <span class="t-dim">│</span>
+<span class="t-dim">│ </span><span class="t-sub">  The Future of Open AI      </span><span class="t-peach">[The Verge]</span>  <span class="t-green">5h ago</span>  <span class="t-dim">│</span>
+<span class="t-dim">│ </span><span class="t-sub t-bold">  New Switch 2 Details       </span><span class="t-peach">[IGN      ]</span>  <span class="t-green">1d ago</span>  <span class="t-dim">│</span>
+<span class="t-dim">└───────────────────────────────────────────────────┘</span>
+<span class="t-dim">┌──────────────┬────────────────────────────────────┐</span>
+<span class="t-dim">│</span><span class="t-sub"> [ image ]    </span><span class="t-dim">│</span><span class="t-mauve t-bold"> Against the Web                  </span><span class="t-dim"> │</span>
+<span class="t-dim">│              │</span><span class="t-peach"> The Verge</span><span class="t-dim"> ·</span><span class="t-green"> 2h ago                  </span><span class="t-dim">│</span>
+<span class="t-dim">│              │ </span><span class="t-sub">Explores the latest thinking in   </span><span class="t-dim">│</span>
+<span class="t-dim">│              │ </span><span class="t-sub">browser development and the open  </span><span class="t-dim">│</span>
+<span class="t-dim">└──────────────┴────────────────────────────────────┘</span>
+<span class="t-dim">|</span><span class="t-green">⏰ 14:32</span><span class="t-dim"> |</span><span class="t-green">📄 Last refresh: 14:31</span><span class="t-dim"> | c config | ? help |</span><span class="t-green">●</span></div>
+  </div>
+
+  <!-- ══ FEATURES ══ -->
+  <section id="features">
+    <h2>Features</h2>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-title">⌂ Home tab</div>
+        <div class="feat-desc">Combined feed from all categories, deduplicated and sorted newest first.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">🖼 Inline images</div>
+        <div class="feat-desc">Preview pane renders article images using <code>terminal-image</code> — pure JS, no external binaries.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">⚙ In-app config</div>
+        <div class="feat-desc">Add, edit, or remove feeds and categories without touching YAML. Press <kbd>c</kbd>.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">▶ YouTube RSS</div>
+        <div class="feat-desc">Paste any YouTube channel URL — auto-converts to the correct RSS feed URL.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">/ Search</div>
+        <div class="feat-desc">Live filter across the active tab by title or source name. Press <kbd>/</kbd>.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">⌨ Vim navigation</div>
+        <div class="feat-desc"><kbd>j</kbd><kbd>k</kbd><kbd>h</kbd><kbd>l</kbd> + arrow keys. Tabs loop around at both ends.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">󰖟 ASCII art headers</div>
+        <div class="feat-desc">Each category tab has a unique ASCII art block. Keyed by name or icon character.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-title">⚡ Cache-first</div>
+        <div class="feat-desc">Loads stale content instantly on startup while refreshing in the background.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ REQUIREMENTS ══ -->
+  <section id="requirements">
+    <h2>Requirements</h2>
+    <ul>
+      <li>Node.js ≥ 20</li>
+      <li>pnpm</li>
+    </ul>
+  </section>
+
+  <!-- ══ INSTALLATION ══ -->
+  <section id="installation">
+    <h2>Installation</h2>
+
+    <pre><div class="pre-hd"><span class="pre-lang">bash</span><div class="pre-dots"><div class="pre-dot"></div><div class="pre-dot"></div><div class="pre-dot"></div></div></div><code><span class="sh-k">git</span> clone &lt;repo-url&gt; rssterm
+<span class="sh-k">cd</span> rssterm
+<span class="sh-k">pnpm</span> install
+
+<span class="sh-c"># Create config directory and copy the example config</span>
+<span class="sh-k">mkdir</span> <span class="sh-f">-p</span> ~/.config/rssterm
+<span class="sh-k">cp</span> config.example.yaml ~/.config/rssterm/config.yaml
+
+<span class="sh-c"># Edit the config to add your feeds</span>
+$EDITOR ~/.config/rssterm/config.yaml
+
+<span class="sh-c"># Run</span>
+<span class="sh-k">pnpm</span> start</code></pre>
+
+    <p><strong>Optional shell alias</strong> (fish) — add to <code>~/.config/fish/config.fish</code>:</p>
+
+    <pre><div class="pre-hd"><span class="pre-lang">fish</span><div class="pre-dots"><div class="pre-dot"></div><div class="pre-dot"></div><div class="pre-dot"></div></div></div><code><span class="sh-k">alias</span> rss=<span class="sh-s">"pnpm --prefix ~/path/to/rssterm start"</span></code></pre>
+  </section>
+
+  <!-- ══ CONFIGURATION ══ -->
+  <section id="configuration">
+    <h2>Configuration</h2>
+    <p>Config file: <code>~/.config/rssterm/config.yaml</code></p>
+
+    <pre><div class="pre-hd"><span class="pre-lang">yaml</span><div class="pre-dots"><div class="pre-dot"></div><div class="pre-dot"></div><div class="pre-dot"></div></div></div><code><span class="y-k">refreshOnStart</span>: <span class="y-b">true</span>      <span class="y-c"># fetch all feeds on startup</span>
+
+<span class="y-k">categories</span>:
+  <span class="y-d">-</span> <span class="y-k">name</span>: <span class="y-v">Tech</span>
+    <span class="y-k">icon</span>: <span class="y-v">"󰖟"</span>             <span class="y-c"># any character — Nerd Font glyph, emoji, ASCII</span>
+    <span class="y-k">feeds</span>:
+      <span class="y-d">-</span> <span class="y-k">name</span>: <span class="y-v">The Verge</span>
+        <span class="y-k">url</span>: <span class="y-v">https://www.theverge.com/rss/index.xml</span>
+      <span class="y-d">-</span> <span class="y-k">name</span>: <span class="y-v">Hacker News</span>
+        <span class="y-k">url</span>: <span class="y-v">https://news.ycombinator.com/rss</span>
+
+  <span class="y-d">-</span> <span class="y-k">name</span>: <span class="y-v">Gaming</span>
+    <span class="y-k">icon</span>: <span class="y-v">"󰊗"</span>
+    <span class="y-k">feeds</span>:
+      <span class="y-d">-</span> <span class="y-k">name</span>: <span class="y-v">IGN</span>
+        <span class="y-k">url</span>: <span class="y-v">https://feeds.feedburner.com/ign/all</span></code></pre>
+
+    <p>You can also manage feeds from inside the app — press <kbd>c</kbd> to open the config panel.</p>
+
+    <h3 id="youtube">YouTube channels</h3>
+    <p>Paste any YouTube channel URL when adding a feed — rssterm converts it automatically:</p>
+
+    <div class="tbl-wrap">
+      <table class="yt">
+        <thead><tr><th>Input</th><th>Converted to</th></tr></thead>
+        <tbody>
+          <tr><td><code>youtube.com/channel/UCxxxxxxx</code></td><td><code>feeds/videos.xml?channel_id=UCxxxxxxx</code></td></tr>
+          <tr><td><code>youtube.com/@handle</code></td><td><code>feeds/videos.xml?channel_id=@handle</code></td></tr>
+          <tr><td><code>youtube.com/c/name</code></td><td><code>feeds/videos.xml?user=name</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ KEYBINDINGS ══ -->
+  <section id="keybindings">
+    <h2>Keybindings</h2>
+
+    <h3 id="normal-mode">Normal mode</h3>
+    <div class="tbl-wrap">
+      <table class="kb">
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>j</kbd> / <kbd>↓</kbd></td><td>Move down</td></tr>
+          <tr><td><kbd>k</kbd> / <kbd>↑</kbd></td><td>Move up</td></tr>
+          <tr><td><kbd>h</kbd> / <kbd>←</kbd></td><td>Previous tab (wraps)</td></tr>
+          <tr><td><kbd>l</kbd> / <kbd>→</kbd></td><td>Next tab (wraps)</td></tr>
+          <tr><td><kbd>o</kbd> / <kbd>Enter</kbd></td><td>Open selected article in browser</td></tr>
+          <tr><td><kbd>r</kbd></td><td>Refresh active tab</td></tr>
+          <tr><td><kbd>R</kbd></td><td>Refresh all tabs</td></tr>
+          <tr><td><kbd>/</kbd></td><td>Search mode</td></tr>
+          <tr><td><kbd>c</kbd></td><td>Config panel</td></tr>
+          <tr><td><kbd>?</kbd></td><td>Help overlay</td></tr>
+          <tr><td><kbd>q</kbd></td><td>Quit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="search-mode">Search mode</h3>
+    <div class="tbl-wrap">
+      <table class="kb">
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Any text</td><td>Live filter by title or source name</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Clear search, return to normal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="config-panel">Config panel (<kbd>c</kbd>)</h3>
+    <div class="tbl-wrap">
+      <table class="kb">
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td>Navigate categories and feeds</td></tr>
+          <tr><td><kbd>Enter</kbd></td><td>Expand / collapse category</td></tr>
+          <tr><td><kbd>a</kbd></td><td>Add feed to selected category</td></tr>
+          <tr><td><kbd>n</kbd></td><td>New category</td></tr>
+          <tr><td><kbd>e</kbd></td><td>Edit selected feed</td></tr>
+          <tr><td><kbd>d</kbd></td><td>Delete selected item</td></tr>
+          <tr><td><kbd>s</kbd></td><td>Save without closing</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Save and close</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>When adding a feed URL, YouTube channel URLs are detected and a preview of the converted RSS URL is shown inline. When creating a category, an icon picker lets you choose using <kbd>←</kbd> / <kbd>→</kbd>.</p>
+  </section>
+
+  <!-- ══ PROJECT STRUCTURE ══ -->
+  <section id="structure">
+    <h2>Project structure</h2>
+    <div class="filetree"><span class="ft-dir">src/</span>
+<span class="ft-tree">├── </span><span class="ft-file">index.tsx</span>                   <span class="ft-note"># Entry point</span>
+<span class="ft-tree">├── </span><span class="ft-file">app.tsx</span>                     <span class="ft-note"># Root component — all state, keybindings, refresh logic</span>
+<span class="ft-tree">├── </span><span class="ft-dir">components/</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">ArticleList.tsx</span>         <span class="ft-note"># Scrollable article list with ASCII art header</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">PreviewPane.tsx</span>         <span class="ft-note"># Image + title + description for selected article</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">SearchBar.tsx</span>           <span class="ft-note"># Live search input</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">HelpOverlay.tsx</span>         <span class="ft-note"># Keybinding reference</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">ConfigPanel.tsx</span>         <span class="ft-note"># In-app feed/category editor</span>
+<span class="ft-tree">│   └── </span><span class="ft-dir">ui/</span>                     <span class="ft-note"># termcn components (shadcn registry)</span>
+<span class="ft-tree">├── </span><span class="ft-dir">hooks/</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">use-input.ts</span>            <span class="ft-note"># Ink useInput re-export</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">use-focus.ts</span>            <span class="ft-note"># Ink useFocus re-export</span>
+<span class="ft-tree">│   ├── </span><span class="ft-file">use-interval.ts</span>         <span class="ft-note"># setInterval hook</span>
+<span class="ft-tree">│   └── </span><span class="ft-file">use-animation.ts</span>        <span class="ft-note"># Frame counter for spinner</span>
+<span class="ft-tree">└── </span><span class="ft-dir">lib/</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">types.ts</span>                <span class="ft-note"># Shared TypeScript interfaces</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">config.ts</span>               <span class="ft-note"># loadConfig() / saveConfig()</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">cache.ts</span>                <span class="ft-note"># loadCache() / saveCache()</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">rss.ts</span>                  <span class="ft-note"># fetchFeed() — rss-parser + image URL extraction</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">dates.ts</span>                <span class="ft-note"># formatRelative()</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">open.ts</span>                 <span class="ft-note"># openInBrowser() via xdg-open</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">image.ts</span>                <span class="ft-note"># fetchImageAsLines() + YouTube URL conversion</span>
+<span class="ft-tree">    ├── </span><span class="ft-file">ascii-art.ts</span>            <span class="ft-note"># getCategoryArt() lookup table</span>
+<span class="ft-tree">    └── </span><span class="ft-dir">terminal-themes/</span>
+<span class="ft-tree">        ├── </span><span class="ft-file">catppuccin.ts</span>       <span class="ft-note"># Catppuccin Mocha tokens</span>
+<span class="ft-tree">        └── </span><span class="ft-file">default.ts</span>          <span class="ft-note"># Fallback theme</span></div>
+  </section>
+
+  <!-- ══ STACK ══ -->
+  <section id="stack">
+    <h2>Stack</h2>
+    <div class="tbl-wrap">
+      <table class="stk">
+        <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+        <tbody>
+          <tr><td>Runtime</td><td>Node.js + TypeScript via <code>tsx</code></td></tr>
+          <tr><td>UI framework</td><td><a href="https://github.com/vadimdemedes/ink">Ink 7</a> — React for the terminal</td></tr>
+          <tr><td>Components</td><td><a href="https://www.termcn.dev">termcn</a> — shadcn for Ink</td></tr>
+          <tr><td>Theme</td><td>Catppuccin Mocha</td></tr>
+          <tr><td>RSS parsing</td><td><code>rss-parser</code></td></tr>
+          <tr><td>Image rendering</td><td><code>terminal-image</code> — pure JS, no binaries required</td></tr>
+          <tr><td>Config</td><td>YAML via <code>js-yaml</code></td></tr>
+          <tr><td>Package manager</td><td>pnpm</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ DEVELOPMENT ══ -->
+  <section id="development">
+    <h2>Development</h2>
+    <pre><div class="pre-hd"><span class="pre-lang">bash</span><div class="pre-dots"><div class="pre-dot"></div><div class="pre-dot"></div><div class="pre-dot"></div></div></div><code><span class="sh-c"># Type check</span>
+<span class="sh-k">pnpm</span> typecheck
+
+<span class="sh-c"># Run</span>
+<span class="sh-k">pnpm</span> start</code></pre>
+    <p>Cache is stored at <code>~/.config/rssterm/cache.json</code>. Delete it to force a cold start.</p>
+  </section>
+
+  <!-- ══ CUSTOMIZATION ══ -->
+  <section id="customization">
+    <h2>Customization</h2>
+
+    <h3>Theme</h3>
+    <p>Colors are defined in <code>src/lib/terminal-themes/catppuccin.ts</code>. Change any hex value and restart.</p>
+
+    <h3>ASCII art headers</h3>
+    <p><code>src/lib/ascii-art.ts</code> contains a lookup table keyed by category name and icon character. Add entries to give any category its own art.</p>
+
+    <h3>Article list height</h3>
+    <pre><div class="pre-hd"><span class="pre-lang">typescript</span><div class="pre-dots"><div class="pre-dot"></div><div class="pre-dot"></div><div class="pre-dot"></div></div></div><code><span class="sh-c">// src/components/ArticleList.tsx</span>
+<span class="ts-kw">const</span> LIST_HEIGHT = <span class="ts-n">10</span>; <span class="ts-c">// visible rows</span></code></pre>
+
+    <h3>Adding a keybinding</h3>
+    <ol>
+      <li>Add a branch inside the <code>useInput</code> handler in <code>src/app.tsx</code></li>
+      <li>Add it to <code>KEYBINDS</code> in <code>src/components/HelpOverlay.tsx</code></li>
+    </ol>
+  </section>
+
+  <hr>
+  <p style="color:var(--overlay0);font-size:12px;text-align:center">MIT License</p>
+
+</main>
+
+<script>
+const links = [...document.querySelectorAll('#sidebar a')];
+const sections = links
+  .map(a => {
+    const id = a.getAttribute('href')?.slice(1);
+    return id ? { el: document.getElementById(id), a } : null;
+  })
+  .filter(Boolean);
+
+const onScroll = () => {
+  const y = window.scrollY + 140;
+  let cur = sections[0];
+  for (const s of sections) if (s.el && s.el.offsetTop <= y) cur = s;
+  links.forEach(l => l.classList.remove('active'));
+  if (cur) cur.a.classList.add('active');
+};
+
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>

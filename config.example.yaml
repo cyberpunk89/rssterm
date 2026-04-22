@@ -1,0 +1,22 @@
+refreshOnStart: true
+
+categories:
+  - name: Tech
+    icon: "󰖟"
+    feeds:
+      - name: The Verge
+        url: https://www.theverge.com/rss/index.xml
+
+  - name: Gaming
+    icon: "󰊗"
+    feeds:
+      - name: IGN
+        url: https://feeds.feedburner.com/ign/all
+
+  - name: Podcasts
+    icon: "󰋋"
+    feeds:
+      - name: Hello from the Magic Tavern
+        url: https://feeds.simplecast.com/XwOnFbuU
+      - name: Beyond Podcast
+        url: https://feeds.buzzsprout.com/2044329.rss
